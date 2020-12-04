@@ -1015,21 +1015,11 @@ passports = [s.replace("\n", " ").split(" ") for s in input]
 hairPattern = re.compile('^#[0-9a-f]{6}$')
 pidPattern = re.compile('^[0-9]{9}$')
 
-def checkHeight(v):
-    if 'cm' in v:
-        v = v.replace('cm', '')
-        return int(v) >= 150 and int(v) <= 193
-    elif 'in' in v:
-        v = v.replace('in', '')
-        return int(v) >= 59 and int(v) <= 76
-
-    return False
-
 validation = {
 'byr': lambda v: int(v) >= 1920 and int(v) <= 2002,
 'iyr': lambda v: int(v) >= 2010 and int(v) <= 2020,
 'eyr': lambda v: int(v) >= 2020 and int(v) <= 2030,
-'hgt': checkHeight,
+'hgt': lambda v: (v[-2:] == 'cm' and int(v[:-2]) >= 150 and int(v[:-2]) <= 193) or (v[-2:] == 'in' and int(v[:-2]) >= 59 and int(v[:-2]) <= 76),
 'hcl': lambda v: bool(hairPattern.match(v)),
 'ecl': lambda v: v in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'],
 'pid': lambda v: bool(pidPattern.match(v)),
