@@ -1,6 +1,5 @@
 import re
 
-
 input = """15-19 k: kkkkkkkkkkkkzkkkkkkk
 1-11 s: sbssswsqsssssrlss
 8-9 b: pbbbbbbkbz
@@ -1000,16 +999,18 @@ input = """15-19 k: kkkkkkkkkkkkzkkkkkkk
 2-11 c: flcqrnrqmcccs
 2-3 f: qfdx
 11-15 k: kkkkdkkkkkgkkkkkkrq
-9-14 h: hzhhfhhxhhhhhltnh""".split("\n")
+9-14 h: hzhhfhhxhhhhhltnh"""
+
+input = input.split("\n")
 
 parsed = [re.findall(r"(\d+)-(\d+)\s(\w):\s(.*)", i) for i in input]
 
-v = 0 
+v = 0
 for p in parsed:
     p = p[0]
     c = p[3].count(p[2])
     if c >= int(p[0]) and c <= int(p[1]):
-        v +=1
+        v += 1
 
 
 print(f"part one: {v}")
@@ -1019,18 +1020,17 @@ for p in parsed:
     p = p[0]
     p1 = int(p[0])
     p2 = int(p[1])
-    l = p[2]
     s = p[3]
     o = 0
 
-    if l == s[p1-1]:
+    if p[2] == s[p1 - 1]:
         o += 1
 
-    if l == s[p2-1]:
+    if p[2] == s[p2 - 1]:
         o += 1
 
     if o == 1:
         v += 1
-        print(f"ok {p1} {p2} {l} {s}: {s[p1-1]} {s[p2-1]} ")
+        print(f"ok {p1} {p2} {p[2]} {s}: {s[p1-1]} {s[p2-1]} ")
 
 print(f"part two: {v}")
