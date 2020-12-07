@@ -24,7 +24,7 @@ def calcSeat(seat):
         elif letter == "R":
             _, posCols = splitList(posCols)
         else:
-            raise Exception(f"Unknow char: {letter}")
+            raise Exception(f"Unknown char: {letter}")
 
     if len(posRows) != 1:
         raise Exception(f"Too many rows left: {posRows}")
@@ -57,4 +57,4 @@ for i in foundSeats:
 if len(emptySeats) == 1:
     print(f"part 2: {emptySeats[0]}")
 else:
-    raise Exception(f"Incorect number of empty seats found: {emptySeats}")
+    raise Exception(f"Incorrect number of empty seats found: {emptySeats}")
