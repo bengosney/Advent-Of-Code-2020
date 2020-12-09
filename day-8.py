@@ -27,7 +27,6 @@ def run(program):
 
 
 acc = run(input)[0]
-acc = run(input)[0]
 
 print(f"part 1: {acc}")
 
