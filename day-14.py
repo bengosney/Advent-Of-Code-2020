@@ -1,11 +1,13 @@
 import re
 from collections import defaultdict
+from functools import lru_cache
 
 import utils
 
 input = utils.getInput(14).splitlines()
 
-memory = defaultdict(lambda: 0)
+memoryPart1 = defaultdict(lambda: 0)
+memoryPart2 = defaultdict(lambda: 0)
 
 
 def maskValue(value, mask):
@@ -20,6 +22,26 @@ def maskValue(value, mask):
     return int("".join(maskedVal), 2)
 
 
+@lru_cache
+def getMemLocs(i, mask, loc, val):
+    memlocs = []
+
+    if i == len(mask):
+        memlocs.append(loc)
+    else:
+        if mask[i] == "X":
+            memlocs += getMemLocs(i + 1, mask, f"{loc}0", val)
+            memlocs += getMemLocs(i + 1, mask, f"{loc}1", val)
+
+        if mask[i] == "1":
+            memlocs += getMemLocs(i + 1, mask, f"{loc}1", val)
+
+        if mask[i] == "0":
+            memlocs += getMemLocs(i + 1, mask, f"{loc}{val[i]}", val)
+
+    return set(memlocs)
+
+
 mask = None
 for line in input:
     cmd, value = line.split(" = ")
@@ -29,7 +51,12 @@ for line in input:
 
     memloc = int(re.search(r"\d+", cmd).group())
 
-    memory[memloc] = maskValue(int(value), mask)
+    memoryPart1[memloc] = maskValue(int(value), mask)
+
+    maskedMemLocs = getMemLocs(0, mask, "", str(bin(memloc)[2:]).zfill(len(mask)))
+    for maskedMemLoc in maskedMemLocs:
+        memoryPart2[int(maskedMemLoc, 2)] = int(value)
 
 
-print(f"part 1: {sum(memory.values())}")
+print(f"part 1: {sum(memoryPart1.values())}")
+print(f"part 2: {sum(memoryPart2.values())}")
