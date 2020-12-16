@@ -1,22 +1,6 @@
-import math
-
 import utils
 
 inputBlocks = utils.getInput(16).split("\n\n")
-
-inputBlocksy = """class: 0-1 or 4-19
-row: 0-5 or 8-19
-seat: 0-13 or 16-19
-
-your ticket:
-11,12,13
-
-nearby tickets:
-3,9,18
-15,1,5
-5,14,9""".split(
-    "\n\n"
-)
 
 
 class Rule:
@@ -53,7 +37,6 @@ class Ticket:
         for i in self.numbers:
             failed = []
             for rule in rules:
-
                 for r in rule.ranges:
                     if i < r[0] or i > r[1]:
                         failed.append(True)
@@ -61,6 +44,7 @@ class Ticket:
                         failed.append(False)
             if all(failed):
                 err += i
+
         return err
 
     def setinvalidMap(self, rules, invalidMap):
@@ -91,37 +75,29 @@ for row in inputBlocks[2].splitlines():
 myTicket = Ticket.parse(inputBlocks[1].splitlines()[1])
 
 errorRate = 0
-validTickets = []
+invalidMap = {r.name: set() for r in rules}
 for ticket in tickets:
     err = ticket.check(rules)
     if err == 0:
-        validTickets.append(ticket)
+        ticket.setinvalidMap(rules, invalidMap)
     errorRate += err
 
 print(f"part 1: {errorRate}")
 
-invalidMap = {r.name: set() for r in rules}
-
-for ticket in validTickets:
-    ticket.setinvalidMap(rules, invalidMap)
-
-
 cols = list(range(len(tickets[0].numbers)))
-names = [r.name for r in rules]
-colmap = {}
-while len(names) > 1:
+unmappedFields = [r.name for r in rules]
+fieldMap = {}
+while len(unmappedFields) > 1:
     for key in invalidMap:
-        if len(invalidMap[key]) == len(names) - 1:
-            validCols = [c for c in cols if c not in invalidMap[key]]
-            colmap[key] = validCols[0]
-            cols.remove(validCols[0])
-            names.remove(key)
+        if len(invalidMap[key]) == len(unmappedFields) - 1:
+            validCol = [c for c in cols if c not in invalidMap[key]][0]
+            fieldMap[key] = validCol
+            cols.remove(validCol)
+            unmappedFields.remove(key)
 
-fullMap = {}
-departures = []
-for col in colmap:
-    fullMap[col] = myTicket.numbers[colmap[col]]
+departures = 1
+for col in fieldMap:
     if "departure" in col:
-        departures.append(myTicket.numbers[colmap[col]])
+        departures *= myTicket.numbers[fieldMap[col]]
 
-print(f"part 2: {math.prod(departures)}")
+print(f"part 2: {departures}")
