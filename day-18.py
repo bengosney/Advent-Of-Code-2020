@@ -2,6 +2,7 @@ import utils
 
 input = utils.getInput(18)
 
+input = "5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))"
 lines = [l.strip() for l in input.replace(" ", "").splitlines()]
 
 
@@ -46,9 +47,39 @@ def calc(tree):
     return tot
 
 
+def calc2(tree):
+    newTree = tree.copy()
+
+    ops = {
+        "+": lambda v1, v2: v1 + v2,
+        "*": lambda v1, v2: v1 * v2,
+    }
+
+    for op in ops:
+        while op in [l for l in newTree if not isinstance(l, list)]:
+            i = newTree.index(op)
+
+            v = []
+            for j in range(i - 1, i + 2, 2):
+                if isinstance(newTree[j], list):
+                    v.append(calc2(newTree[j]))
+                else:
+                    v.append(newTree[j])
+
+            newTree = newTree[: i - 1] + [ops[op](v[0], v[1])] + newTree[i + 2 :]
+
+    return newTree[0]
+
+
 def getTotal(line):
     _, fullTree = lex(line)
     return calc(fullTree)
 
 
+def getTotal2(line):
+    _, fullTree = lex(line)
+    return calc2(fullTree)
+
+
 print(f"part 1: {sum([getTotal(l) for l in lines])}")
+print(f"part 2: {sum([getTotal2(l) for l in lines])}")
