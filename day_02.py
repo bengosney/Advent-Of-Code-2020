@@ -13,7 +13,6 @@ for p in parsed:
     if c >= int(p[0]) and c <= int(p[1]):
         v += 1
 
-
 print(f"part one: {v}")
 
 v = 0
@@ -32,6 +31,5 @@ for p in parsed:
 
     if o == 1:
         v += 1
-        print(f"ok {p1} {p2} {p[2]} {s}: {s[p1-1]} {s[p2-1]} ")
 
 print(f"part two: {v}")

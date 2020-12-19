@@ -21,7 +21,7 @@ for i in range(len(adaptors) - 1):
 print(f"part 1: {jumps[1] * jumps[3]}")
 
 
-@lru_cache
+@lru_cache()
 def getPos(i=0):
     if adaptors[i] == myAdaptor:
         return 1

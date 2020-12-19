@@ -64,7 +64,8 @@ class waypoint(base):
 
         x = math.cos(a) * self.x - math.sin(a) * self.y
         y = math.sin(a) * self.x + math.cos(a) * self.y
-        self.x, self.y = round(x), round(y)
+
+        return round(x), round(y)
 
     def __str__(self) -> str:
         return f"{self.dir}: {self.x} {self.y} || {self.e} {self.n} || {self.x - self.e} {self.y - self.n}"

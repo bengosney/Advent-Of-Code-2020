@@ -22,7 +22,7 @@ def maskValue(value, mask):
     return int("".join(maskedVal), 2)
 
 
-@lru_cache
+@lru_cache()
 def getMemLocs(i, mask, loc, val):
     memlocs = []
 

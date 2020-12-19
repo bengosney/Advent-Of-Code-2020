@@ -1,4 +1,6 @@
 import math
+import operator
+from functools import reduce
 
 import utils
 
@@ -36,7 +38,7 @@ print(f"part 1: {currentBestBus.id * (min - start)}")
 
 invm = lambda a, b: 0 if a == 0 else 1 if b % a == 0 else b - invm(b % a, a) * b // a
 
-N = math.prod([b.id for b in busses])
+N = reduce(operator.mul, [b.id for b in busses], 1)
 x = sum([b.position * (N // b.id) * invm(N // b.id, b.id) for b in busses])
 
 print(f"part 2: {N - x % N}")
