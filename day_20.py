@@ -4,12 +4,6 @@ import utils
 
 input = utils.getInput(20)
 
-input1 = """Tile 1:
-1234
-5678
-9abc
-defg"""
-
 rawTiles = input.split("\n\n")
 
 
@@ -34,17 +28,30 @@ class Tile:
 
         return cls(id, lines)
 
+    def __str__(self) -> str:
+        bob = len(self.data)
+        line = ""
+        for i, k in enumerate(self.data):
+            line += self.data[k]
+            if (i % self.size) + 1 == self.size:
+                line += "\n"
+
+        return line
+
+    def row(self, r):
+        return [self.data[(x, r)] for x in range(self.size)]
+
     @property
     def size(self):
         return int(sqrt(len(self.data)))
 
     @property
     def top(self):
-        return [self.data[(x, 0)] for x in range(self.size)]
+        return self.row(0)
 
     @property
     def bottom(self):
-        return [self.data[(x, self.size - 1)] for x in range(self.size)]
+        return self.row(self.size - 1)
 
     @property
     def left(self):
@@ -98,20 +105,21 @@ class Tile:
 
         return fits
 
+    def removeBorder(self):
+        new = {}
+        for y in range(1, self.size - 1):
+            for x in range(1, self.size - 1):
+                new[(x - 1, y - 1)] = self.data[(x, y)]
 
-class Grid:
-    def __init__(self) -> None:
-        super().__init__()
-        self.grid = {}
+        self.data = new
 
-    def __len__(self) -> int:
-        return len(self.grid)
 
-    def min(self):
-        return min([k[0] for k in self.grid]), min([k[0] for k in self.grid])
+def minGrid(grid):
+    return min([k[0] for k in grid]), min([k[1] for k in grid])
 
-    def max(self):
-        return max([k[0] for k in self.grid]), max([k[0] for k in self.grid])
+
+def maxGrid(grid):
+    return max([k[0] for k in grid]), max([k[1] for k in grid])
 
 
 tiles = []
@@ -137,9 +145,9 @@ def part1():
     return part1
 
 
-# print(f"part 1: {part1()}")
+print(f"part 1: {part1()}")
 
-validPairs = [
+validMatches = [
     ("left", "right", False),
     ("right", "left", False),
     ("top", "bottom", False),
@@ -149,10 +157,10 @@ validPairs = [
 placedIDs = []
 grid = {}
 while len(placedIDs) < len(tiles):
-    print(len(placedIDs), len(tiles))
     for tile in tiles:
         if tile.id in placedIDs:
             continue
+
         if len(grid) == 0:
             grid[(0, 0)] = tile
             placedIDs.append(tile.id)
@@ -166,7 +174,7 @@ while len(placedIDs) < len(tiles):
                 i = 0
                 while correctFit is None:
                     fit = grid[(x, y)].fits(tile)[0]
-                    if fit not in validPairs:
+                    if fit not in validMatches:
                         tile.rotate()
                     else:
                         correctFit = fit
@@ -190,4 +198,64 @@ while len(placedIDs) < len(tiles):
                     grid[(x - 1, y)] = tile
                 break
 
-print(len(grid), len(tiles))
+minx, miny = minGrid(grid)
+maxx, maxy = maxGrid(grid)
+
+data = {}
+ax = abs(minx)
+ay = abs(miny)
+gx, gy = 0, 0
+for y in range(miny, maxy + 1):
+    for x in range(minx, maxx + 1):
+        grid[(x, y)].removeBorder()
+        mx = (ax + x) * grid[(x, y)].size
+        my = (ay + y) * grid[(x, y)].size
+        bpb = 1
+        for cy in range(grid[(x, y)].size):
+            for cx in range(grid[(x, y)].size):
+                px = mx + cx
+                py = my + cy
+
+                data[(px, py)] = grid[(x, y)].data[(cx, cy)]
+
+
+monster = """
+                  #
+#    ##    ##    ###
+ #  #  #  #  #  #
+"""
+
+
+bigTile = Tile(0, data)
+
+for i in range(24):
+    line = f"{bigTile}".replace("\n", "")
+    if "#    ##    ##    ###".replace(" ", ".") in line:
+        break
+
+    bigTile.rotate()
+    if i == 4:
+        bigTile.flipX()
+    if i == 8:
+        bigTile.flipY()
+    if i == 12:
+        bigTile.flipX()
+
+
+mCount = 0
+line = f"{bigTile}".replace("\n", "")
+for i, _ in enumerate(line):
+    mods = [0, 5, 6, 11, 12, 17, 18, 19]
+    res = []
+    try:
+        for m in mods:
+            res.append(line[i + m] == "#")
+    except IndexError:
+        break
+
+    if all(res):
+        mCount += 1
+
+num = f"{bigTile}".count("#")
+numInM = monster.count("#")
+print(f"part 2: {num - (mCount * numInM)}")
