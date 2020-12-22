@@ -53,8 +53,8 @@ class Player:
     def addCards(self, cards):
         self.cards += cards
 
-    def clone(self):
-        return Player(self.id, self.cards[:])
+    def clone(self, cardCount):
+        return Player(self.id, self.cards[:cardCount])
 
     @property
     def cardsLeft(self) -> int:
@@ -117,7 +117,7 @@ class RecursiveCombat(Combat):
         p2c = self.p2.getCard()
 
         if self.p1.cardsLeft >= p1c and self.p2.cardsLeft >= p2c:
-            subGame = RecursiveCombat(self.p1.clone(), self.p2.clone())
+            subGame = RecursiveCombat(self.p1.clone(p1c), self.p2.clone(p2c))
             subWinner = subGame.play()
             if subWinner.id == 1:
                 self.p1.addCards([p1c, p2c])
