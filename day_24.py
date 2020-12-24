@@ -4,47 +4,36 @@ import utils
 
 input = utils.getInput(24)
 
-inputy = """sesenwnenenewseeswwswswwnenewsewsw
-neeenesenwnwwswnenewnwwsewnenwseswesw
-seswneswswsenwwnwse
-nwnwneseeswswnenewneswwnewseswneseene
-swweswneswnenwsewnwneneseenw
-eesenwseswswnenwswnwnwsewwnwsene
-sewnenenenesenwsewnenwwwse
-wenwwweseeeweswwwnwwe
-wsweesenenewnwwnwsenewsenwwsesesenwne
-neeswseenwwswnwswswnw
-nenwswwsewswnenenewsenwsenwnesesenew
-enewnwewneswsewnwswenweswnenwsenwsw
-sweneswneswneneenwnewenewwneswswnese
-swwesenesewenwneswnwwneseswwne
-enesenwswwswneneswsenwnewswseenwsese
-wnwnesenesenenwwnenwsewesewsesesew
-nenewswnwewswnenesenwnesewesw
-eneswnwswnwsenenwnwnwwseeswneewsenese
-neswnwewnwnwseenwseesewsenwsweewe
-wseweeenwnesenwwwswnew"""
-
-regex = r"(e|se|sw|w|nw|ne)"
-
-WHITE = True
-BLACK = False
-
-moves = {
-    "e": (1, -1, 0),
-    "se": (0, -1, 1),
-    "sw": (-1, 0, 1),
-    "w": (-1, 1, 0),
-    "nw": (0, 1, -1),
-    "ne": (1, 0, -1),
-}
-
 
 class Grid:
+    WHITE = True
+    BLACK = False
+    START = WHITE
+
+    moves = {
+        "e": (1, -1, 0),
+        "se": (0, -1, 1),
+        "sw": (-1, 0, 1),
+        "w": (-1, 1, 0),
+        "nw": (0, 1, -1),
+        "ne": (1, 0, -1),
+    }
+
     def __init__(self) -> None:
         super().__init__()
-        self.grid = defaultdict(lambda: WHITE)
+        self.grid = self._newGrid()
         self.reset()
+
+    def _newGrid(self):
+        return defaultdict(lambda: self.START)
+
+    def _copyGrid(self):
+        new = self._newGrid()
+        for t in self.grid:
+            if self.grid[t] != self.START:
+                new[t] = self.grid[t]
+
+        return new
 
     def reset(self):
         self.x = 0
@@ -52,10 +41,17 @@ class Grid:
         self.z = 0
 
     def step(self, move):
-        xo, yo, zo = moves[move]
+        xo, yo, zo = self.moves[move]
         self.x += xo
         self.y += yo
         self.z += zo
+
+    @classmethod
+    def move(cls, pos, move):
+        xo, yo, zo = cls.moves[move]
+        x, y, z = pos
+
+        return (x + xo, y + yo, z + zo)
 
     def flip(self):
         self.grid[(self.x, self.y, self.z)] = not self.grid[(self.x, self.y, self.z)]
@@ -71,15 +67,61 @@ class Grid:
             self.flip()
             self.reset()
 
+    def _getRanges(self):
+        xs, ys, zs = [], [], []
+        for key in self.grid:
+            x, y, z = key
+            xs.append(x)
+            ys.append(y)
+            zs.append(z)
+
+        return (
+            range(min(xs) - 1, max(xs) + 2),
+            range(min(ys) - 1, max(ys) + 2),
+            range(min(zs) - 1, max(zs) + 2),
+        )
+
+    def gameRound(self):
+        newGrid = self._copyGrid()
+
+        rx, ry, rz = self._getRanges()
+
+        for x in rx:
+            for y in ry:
+                for z in rz:
+                    key = (x, y, z)
+                    adjBlack = 0
+                    adjWhite = 0
+                    for move in self.moves:
+                        pos = self.move(key, move)
+                        if self.grid[pos] == self.WHITE:
+                            adjWhite += 1
+                        else:
+                            adjBlack += 1
+                    if self.grid[key] == self.BLACK:
+                        if adjBlack == 0 or adjBlack > 2:
+                            newGrid[key] = self.WHITE
+                    else:
+                        if adjBlack == 2:
+                            newGrid[key] = self.BLACK
+
+        self.grid = newGrid
+
     @property
     def whiteCount(self):
-        return sum([True for g in self.grid.values() if g == WHITE])
+        return sum([True for g in self.grid.values() if g == self.WHITE])
 
     @property
     def blackCount(self):
-        return sum([True for g in self.grid.values() if g == BLACK])
+        return sum([True for g in self.grid.values() if g == self.BLACK])
 
 
 grid = Grid()
 grid.parse(input)
 print(f"part 1: {grid.blackCount}")
+
+for i in range(100):
+    grid.gameRound()
+    print(f"day {i}")
+
+print(f"part 2: {grid.blackCount}")
