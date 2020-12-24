@@ -1,4 +1,3 @@
-import time
 from collections import deque
 
 input = "614752839"
@@ -14,15 +13,13 @@ def move():
     inHand = [circle.popleft() for _ in range(3)]
     circle.rotate(1)
 
-    index = None
-    while index is None:
+    current -= 1
+    while current in inHand:
         current -= 1
-        try:
-            index = circle.index(current)
-        except:
-            pass
-        if current < 0:
-            current = max(circle) + 1
+        if current <= 0:
+            current = max(circle)
+
+    index = circle.index()
 
     for i, e in enumerate(inHand):
         circle.insert(index + i + 1, e)
@@ -45,21 +42,8 @@ circle = deque([int(i) for i in input])
 for i in range(max(circle) + 1, 1000000):
     circle.append(i)
 
-
-current_millis = lambda: int(round(time.time() * 1000))
-
-startTime = current_millis()
 rounds = 10000000
 for i in range(rounds):
-    if i % 100 == 0:
-        try:
-            currentTime = current_millis()
-            timePer = (currentTime - startTime) // i
-            timeLeft = (rounds - i) * timePer
-            print(f"left: {rounds - i} - {timeLeft / 60000}")
-            exit(0)
-        except:
-            pass
     move()
 
 circle.rotate(-1)
