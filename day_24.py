@@ -1,11 +1,10 @@
-import re
 from collections import defaultdict
 
 import utils
 
 input = utils.getInput(24)
 
-input = """sesenwnenenewseeswwswswwnenewsewsw
+inputy = """sesenwnenenewseeswwswswwnenewsewsw
 neeenesenwnwwswnenewnwwsewnenwseswesw
 seswneswswsenwwnwse
 nwnwneseeswswnenewneswwnewseswneseene
@@ -45,6 +44,9 @@ class Grid:
     def __init__(self) -> None:
         super().__init__()
         self.grid = defaultdict(lambda: WHITE)
+        self.reset()
+
+    def reset(self):
         self.x = 0
         self.y = 0
         self.z = 0
@@ -55,14 +57,19 @@ class Grid:
         self.y += yo
         self.z += zo
 
+    def flip(self):
         self.grid[(self.x, self.y, self.z)] = not self.grid[(self.x, self.y, self.z)]
 
     def parse(self, input: str):
         for line in input.splitlines():
-            matches = re.finditer(regex, line, re.MULTILINE)
-            for match in matches:
-                for group in match.groups():
-                    self.step(group)
+            move = ""
+            for c in line:
+                move += c
+                if c != "n" and c != "s":
+                    self.step(move)
+                    move = ""
+            self.flip()
+            self.reset()
 
     @property
     def whiteCount(self):
@@ -75,4 +82,4 @@ class Grid:
 
 grid = Grid()
 grid.parse(input)
-print(grid.blackCount)
+print(f"part 1: {grid.blackCount}")
