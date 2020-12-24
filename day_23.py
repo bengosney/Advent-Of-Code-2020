@@ -1,3 +1,4 @@
+import time
 from collections import deque
 
 input = "614752839"
@@ -39,3 +40,30 @@ circle.popleft()
 
 label = "".join([str(c) for c in circle])
 print(f"part 1: {label}")
+
+circle = deque([int(i) for i in input])
+for i in range(max(circle) + 1, 1000000):
+    circle.append(i)
+
+
+current_millis = lambda: int(round(time.time() * 1000))
+
+startTime = current_millis()
+rounds = 10000000
+for i in range(rounds):
+    if i % 100 == 0:
+        try:
+            currentTime = current_millis()
+            timePer = (currentTime - startTime) // i
+            timeLeft = (rounds - i) * timePer
+            print(f"left: {rounds - i} - {timeLeft / 60000}")
+            exit(0)
+        except:
+            pass
+    move()
+
+circle.rotate(-1)
+c1 = circle.popleft()
+c2 = circle.popleft()
+
+print(f"part 2: {c1 * c2}")
