@@ -17,6 +17,9 @@ for i in range(preableSize, inputLength):
         part1 = input[i]
         break
 
+if part1 is None:
+    exit(1)
+
 print(f"part 1: {part1}")
 
 for i in range(inputLength):
@@ -35,5 +38,8 @@ for i in range(inputLength):
 
     if part2 is not None:
         break
+
+if part2 is None:
+    exit(2)
 
 print(f"part 2: {part2}")

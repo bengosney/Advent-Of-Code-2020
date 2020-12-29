@@ -1,6 +1,7 @@
 import math
 import operator
 from functools import reduce
+from typing import Callable
 
 import utils
 
@@ -34,11 +35,17 @@ for bus in busses:
         min = ts
         currentBestBus = bus
 
+if currentBestBus is None or min is None:
+    print("This can't really happen")
+    exit(1)
+
 print(f"part 1: {currentBestBus.id * (min - start)}")
 
-invm = lambda a, b: 0 if a == 0 else 1 if b % a == 0 else b - invm(b % a, a) * b // a
+i: Callable = (
+    lambda a, b: 0 if a == 0 else 1 if b % a == 0 else b - i(b % a, a) * b // a
+)
 
 N = reduce(operator.mul, [b.id for b in busses], 1)
-x = sum([b.position * (N // b.id) * invm(N // b.id, b.id) for b in busses])
+x = sum([b.position * (N // b.id) * i(N // b.id, b.id) for b in busses])
 
 print(f"part 2: {N - x % N}")

@@ -1,5 +1,6 @@
 from collections import defaultdict
 from functools import lru_cache
+from typing import DefaultDict
 
 import utils
 
@@ -13,7 +14,7 @@ adaptors.append(myAdaptor)
 adaptors.append(0)
 adaptors.sort()
 
-jumps = defaultdict(lambda: 0)
+jumps: DefaultDict[int, int] = defaultdict(lambda: 0)
 
 for i in range(len(adaptors) - 1):
     jumps[adaptors[i + 1] - adaptors[i]] += 1

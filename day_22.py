@@ -1,20 +1,8 @@
+from typing import List
+
 import utils
 
 input = utils.getInput(22)
-
-inputy = """Player 1:
-9
-2
-6
-3
-1
-
-Player 2:
-5
-8
-4
-7
-10"""
 
 
 class Player:
@@ -35,7 +23,7 @@ class Player:
 
     @classmethod
     def parse(cls, input: str):
-        id = None
+        id = ""
         cards = []
         for line in input.splitlines():
             if "Player" in line:
@@ -99,7 +87,7 @@ class RecursiveCombat(Combat):
     def __init__(self, p1: Player, p2: Player) -> None:
         super().__init__(p1, p2)
 
-        self.previous = []
+        self.previous: List[str] = []
 
     def round(self):
         roundState = "|".join(

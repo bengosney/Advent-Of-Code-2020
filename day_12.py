@@ -1,19 +1,23 @@
 import math
+from abc import ABC, abstractmethod
+from typing import List, Literal, Tuple
 
 import utils
 
 input = utils.getInput(12)
 commands = [(r[0], int(r[1:])) for r in input.splitlines()]
 
+Dirs = Literal["N", "E", "S", "W"]
+Command = Tuple[Dirs, int]
 
-class base:
-    dir = None
-    x = 0
-    y = 0
 
-    def __init__(self, dir="E", x=0, y=0) -> None:
+class Base(ABC):
+    x: int = 0
+    y: int = 0
+
+    def __init__(self, dir: Dirs = "E", x=0, y=0) -> None:
         super().__init__()
-        self.dir = dir
+        self.dir: Dirs = dir
         self.x, self.y = x, y
 
     def __str__(self) -> str:
@@ -26,9 +30,13 @@ class base:
         for command in commands:
             self.process(command)
 
-
-class ship(base):
+    @abstractmethod
     def process(self, command):
+        pass
+
+
+class Ship(Base):
+    def process(self, command: Command):
         action, amount = command
 
         if action == "N":
@@ -43,7 +51,7 @@ class ship(base):
         if action == "F":
             self.process((self.dir, amount))
 
-        dirs = ["N", "E", "S", "W"]
+        dirs: List[Dirs] = ["N", "E", "S", "W"]
         if action == "L":
             cur = dirs.index(self.dir) - (amount // 90)
             self.dir = dirs[cur % len(dirs)]
@@ -52,7 +60,7 @@ class ship(base):
             self.dir = dirs[cur % len(dirs)]
 
 
-class waypoint(base):
+class Waypoint(Base):
     e = 0
     n = 0
 
@@ -92,10 +100,10 @@ class waypoint(base):
             self.x, self.y = self.rotate(-amount)
 
 
-ship = ship()
+ship = Ship()
 ship.processCommands(commands)
 print(f"part 1: {ship.manhattanDistance()}")
 
-waypoint = waypoint(x=10, y=1)
+waypoint = Waypoint(x=10, y=1)
 waypoint.processCommands(commands)
 print(f"part 2: {waypoint.manhattanDistance()}")

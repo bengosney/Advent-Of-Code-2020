@@ -1,3 +1,5 @@
+from typing import Dict, List, Set
+
 import utils
 
 inputBlocks = utils.getInput(16).split("\n\n")
@@ -29,7 +31,7 @@ class Ticket:
         self.numbers = numbers
 
     @classmethod
-    def parse(cls, row):
+    def parse(cls, row: str) -> "Ticket":
         return cls([int(i) for i in row.split(",")])
 
     def check(self, rules) -> int:
@@ -65,7 +67,7 @@ rules = []
 for row in inputBlocks[0].splitlines():
     rules.append(Rule.parse(row))
 
-tickets = []
+tickets: List[Ticket] = []
 for row in inputBlocks[2].splitlines():
     if "ticket" in row:
         continue
@@ -75,7 +77,7 @@ for row in inputBlocks[2].splitlines():
 myTicket = Ticket.parse(inputBlocks[1].splitlines()[1])
 
 errorRate = 0
-invalidMap = {r.name: set() for r in rules}
+invalidMap: Dict[str, Set[int]] = {r.name: set() for r in rules}
 for ticket in tickets:
     err = ticket.check(rules)
     if err == 0:

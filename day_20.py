@@ -1,4 +1,5 @@
 from math import sqrt
+from typing import Dict, List, Literal, Tuple
 
 import utils
 
@@ -6,16 +7,20 @@ input = utils.getInput(20)
 
 rawTiles = input.split("\n\n")
 
+Row = List[str]
+Sides = Literal["top", "right", "bottom", "left"]
+AllSides = Tuple[Sides, Sides, Sides, Sides]
+
 
 class Tile:
-    def __init__(self, id: int, data: list()) -> None:
+    def __init__(self, id: int, data: Dict[Tuple[int, int], str]) -> None:
         super().__init__()
-        self.id = id
-        self.data = data
+        self.id: int = id
+        self.data: Dict[Tuple[int, int], str] = data
 
     @classmethod
     def parse(cls, rawTitle: str) -> "Tile":
-        id = None
+        id = 0
         lines = {}
         y = 0
         for line in rawTitle.splitlines():
@@ -29,7 +34,6 @@ class Tile:
         return cls(id, lines)
 
     def __str__(self) -> str:
-        bob = len(self.data)
         line = ""
         for i, k in enumerate(self.data):
             line += self.data[k]
@@ -38,30 +42,30 @@ class Tile:
 
         return line
 
-    def row(self, r):
+    def row(self, r: int) -> Row:
         return [self.data[(x, r)] for x in range(self.size)]
 
     @property
-    def size(self):
+    def size(self) -> int:
         return int(sqrt(len(self.data)))
 
     @property
-    def top(self):
+    def top(self) -> Row:
         return self.row(0)
 
     @property
-    def bottom(self):
+    def bottom(self) -> Row:
         return self.row(self.size - 1)
 
     @property
-    def left(self):
+    def left(self) -> Row:
         return [self.data[(0, y)] for y in range(self.size)]
 
     @property
-    def right(self):
+    def right(self) -> Row:
         return [self.data[(self.size - 1, y)] for y in range(self.size)]
 
-    def flipX(self):
+    def flipX(self) -> None:
         new = {}
         for y in range(self.size):
             for x in range(self.size):
@@ -69,7 +73,7 @@ class Tile:
                 new[(nx, y)] = self.data[(x, y)]
         self.data = new
 
-    def flipY(self):
+    def flipY(self) -> None:
         new = {}
         for y in range(self.size):
             for x in range(self.size):
@@ -77,7 +81,7 @@ class Tile:
                 new[(x, ny)] = self.data[(x, y)]
         self.data = new
 
-    def rotate(self):
+    def rotate(self) -> None:
         new = {}
         for y in range(self.size):
             for x in range(self.size):
@@ -85,14 +89,14 @@ class Tile:
                 new[(ny, x)] = self.data[(x, y)]
         self.data = new
 
-    def draw(self):
+    def draw(self) -> None:
         for y in range(self.size):
             for x in range(self.size):
                 print(self.data[(x, y)], end="")
             print()
 
-    def fits(self, tile):
-        sides = ("top", "right", "bottom", "left")
+    def fits(self, tile: "Tile") -> List[Tuple[Sides, Sides, bool]]:
+        sides: AllSides = ("top", "right", "bottom", "left")
         fits = []
         for selfSide in sides:
             for otherSide in sides:
@@ -105,7 +109,7 @@ class Tile:
 
         return fits
 
-    def removeBorder(self):
+    def removeBorder(self) -> None:
         new = {}
         for y in range(1, self.size - 1):
             for x in range(1, self.size - 1):
@@ -114,11 +118,14 @@ class Tile:
         self.data = new
 
 
-def minGrid(grid):
+Grid = Dict[Tuple[int, int], Tile]
+
+
+def minGrid(grid: Grid) -> Tuple[int, int]:
     return min([k[0] for k in grid]), min([k[1] for k in grid])
 
 
-def maxGrid(grid):
+def maxGrid(grid: Grid) -> Tuple[int, int]:
     return max([k[0] for k in grid]), max([k[1] for k in grid])
 
 
@@ -128,7 +135,7 @@ for rawTile in rawTiles:
     tiles.append(tile)
 
 
-def part1():
+def part1() -> int:
     ids = []
     for t1 in tiles:
         fits = []
@@ -154,8 +161,8 @@ validMatches = [
     ("bottom", "top", False),
 ]
 
-placedIDs = []
-grid = {}
+placedIDs: List[int] = []
+grid: Grid = {}
 while len(placedIDs) < len(tiles):
     for tile in tiles:
         if tile.id in placedIDs:
@@ -198,15 +205,15 @@ while len(placedIDs) < len(tiles):
                     grid[(x - 1, y)] = tile
                 break
 
-minx, miny = minGrid(grid)
-maxx, maxy = maxGrid(grid)
+minX, minY = minGrid(grid)
+maxX, maxY = maxGrid(grid)
 
 data = {}
-ax = abs(minx)
-ay = abs(miny)
+ax = abs(minX)
+ay = abs(minY)
 gx, gy = 0, 0
-for y in range(miny, maxy + 1):
-    for x in range(minx, maxx + 1):
+for y in range(minY, maxY + 1):
+    for x in range(minX, maxX + 1):
         grid[(x, y)].removeBorder()
         mx = (ax + x) * grid[(x, y)].size
         my = (ay + y) * grid[(x, y)].size

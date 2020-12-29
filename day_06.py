@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import DefaultDict
 
 import utils
 
@@ -7,7 +8,7 @@ input = utils.getInput(6).split("\n\n")
 p1 = 0
 p2 = 0
 for group in input:
-    answers = defaultdict(lambda: 0)
+    answers: DefaultDict[str, int] = defaultdict(lambda: 0)
     for line in group:
         for char in line.strip():
             answers[char] += 1

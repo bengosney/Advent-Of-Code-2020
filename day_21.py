@@ -1,23 +1,21 @@
 from collections import defaultdict
+from typing import DefaultDict, Dict, List, Set
 
 import utils
 
 input = utils.getInput(21)
 
-inputy = """mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
-trh fvjkl sbzzf mxmxvkd (contains dairy)
-sqjhc fvjkl (contains soy)
-sqjhc mxmxvkd sbzzf (contains fish)"""
-
-ingredients = set()
-allergens = defaultdict(lambda: defaultdict(lambda: 0))
-allergenCount = defaultdict(lambda: 0)
-seen = defaultdict(lambda: 0)
+ingredients: Set[str] = set()
+allergens: DefaultDict[str, DefaultDict[str, int]] = defaultdict(
+    lambda: defaultdict(lambda: 0)
+)
+allergenCount: DefaultDict[str, int] = defaultdict(lambda: 0)
+seen: DefaultDict[str, int] = defaultdict(lambda: 0)
 
 for l in input.replace("(contains", "|").replace(")", "").splitlines():
-    _ins, _als = l.split("|")
+    _insStr, _als = l.split("|")
 
-    _ins = _ins.strip().split(" ")
+    _ins = _insStr.strip().split(" ")
     for _in in _ins:
         seen[_in] += 1
     for _al in _als.strip().split(", "):
@@ -26,24 +24,31 @@ for l in input.replace("(contains", "|").replace(")", "").splitlines():
             ingredients.add(_in)
         allergenCount[_al] += 1
 
-contains = defaultdict(lambda: [])
-isin = defaultdict(lambda: set())
+contains: DefaultDict[str, List[str]] = defaultdict(lambda: [])
+isIn: DefaultDict[str, Set[str]] = defaultdict(lambda: set())
 hasAllergen = []
 for allergen in allergens:
     for ingredient in allergens[allergen]:
         if allergens[allergen][ingredient] == allergenCount[allergen]:
             contains[ingredient].append(allergen)
-            isin[allergen].add(ingredient)
+            isIn[allergen].add(ingredient)
             hasAllergen.append(ingredient)
 
-definitiveContains = {}
-while isin:
-    for allergen, ingredient in list(isin.items()):
-        if len(ingredient) == 1:
-            definitiveContains[allergen] = min(ingredient)
-            del isin[allergen]
-        else:
-            isin[allergen] -= set(definitiveContains.values())
+
+def getDefinitiveContains() -> Dict[str, str]:
+    definitiveContains = {}
+    while isIn:
+        for allergen, ingredient in list(isIn.items()):
+            if len(ingredient) == 1:
+                definitiveContains[allergen] = min(ingredient)
+                del isIn[allergen]
+            else:
+                isIn[allergen] -= set(definitiveContains.values())
+
+    return definitiveContains
+
+
+definitiveContains = getDefinitiveContains()
 
 allergenFree = set()
 for ingredient in ingredients:

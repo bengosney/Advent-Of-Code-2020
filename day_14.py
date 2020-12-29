@@ -1,13 +1,14 @@
 import re
 from collections import defaultdict
 from functools import lru_cache
+from typing import DefaultDict
 
 import utils
 
 input = utils.getInput(14).splitlines()
 
-memoryPart1 = defaultdict(lambda: 0)
-memoryPart2 = defaultdict(lambda: 0)
+memoryPart1: DefaultDict[int, int] = defaultdict(lambda: 0)
+memoryPart2: DefaultDict[int, int] = defaultdict(lambda: 0)
 
 
 def maskValue(value, mask):
@@ -42,14 +43,22 @@ def getMemLocs(i, mask, loc, val):
     return set(memlocs)
 
 
-mask = None
+mask = "None"
 for line in input:
     cmd, value = line.split(" = ")
     if cmd == "mask":
         mask = value
         continue
 
-    memloc = int(re.search(r"\d+", cmd).group())
+    if mask is None:
+        print("Incorrect input, mask is not the first line")
+        exit(1)
+
+    search = re.search(r"\d+", cmd)
+    if search is None:
+        print("No match found")
+        exit(1)
+    memloc = int(search.group())
 
     memoryPart1[memloc] = maskValue(int(value), mask)
 
