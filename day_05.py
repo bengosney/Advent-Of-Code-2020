@@ -49,10 +49,11 @@ for seat in input:
 
 print(f"part 1: {highSeat}")
 
-emptySeats = []
-for i in foundSeats:
-    if i + 1 not in foundSeats and i + 2 in foundSeats:
-        emptySeats.append(i + 1)
+emptySeats = [
+    i + 1
+    for i in foundSeats
+    if i + 1 not in foundSeats and i + 2 in foundSeats
+]
 
 if len(emptySeats) == 1:
     print(f"part 2: {emptySeats[0]}")

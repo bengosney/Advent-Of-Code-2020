@@ -27,7 +27,7 @@ def move():
     circle.rotate(-1)
 
 
-for i in range(rounds):
+for _ in range(rounds):
     move()
 
 while circle[0] != 1:
@@ -35,7 +35,7 @@ while circle[0] != 1:
 
 circle.popleft()
 
-label = "".join([str(c) for c in circle])
+label = "".join(str(c) for c in circle)
 print(f"part 1: {label}")
 
 circle = deque([int(i) for i in input])
@@ -43,7 +43,7 @@ for i in range(max(circle) + 1, 1000000):
     circle.append(i)
 
 rounds = 10000000
-for i in range(rounds):
+for _ in range(rounds):
     move()
 
 circle.rotate(-1)

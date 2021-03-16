@@ -12,8 +12,8 @@ for group in input:
     for line in group:
         for char in line.strip():
             answers[char] += 1
-    p1 += sum([True for i in answers.values() if i > 0])
-    p2 += sum([True for i in answers.values() if i == len(group.splitlines())])
+    p1 += sum(True for i in answers.values() if i > 0)
+    p2 += sum(True for i in answers.values() if i == len(group.splitlines()))
 
 print(f"part 1: {p1}")
 print(f"part 2: {p2}")

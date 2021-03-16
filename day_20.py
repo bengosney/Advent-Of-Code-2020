@@ -76,16 +76,16 @@ class Tile:
     def flipY(self) -> None:
         new = {}
         for y in range(self.size):
+            ny = (self.size - y) - 1
             for x in range(self.size):
-                ny = (self.size - y) - 1
                 new[(x, ny)] = self.data[(x, y)]
         self.data = new
 
     def rotate(self) -> None:
         new = {}
         for y in range(self.size):
+            ny = (self.size - y) - 1
             for x in range(self.size):
-                ny = (self.size - y) - 1
                 new[(ny, x)] = self.data[(x, y)]
         self.data = new
 
@@ -99,8 +99,8 @@ class Tile:
         sides: AllSides = ("top", "right", "bottom", "left")
         fits = []
         for selfSide in sides:
+            side1 = "".join(getattr(self, selfSide))
             for otherSide in sides:
-                side1 = "".join(getattr(self, selfSide))
                 side2 = "".join(getattr(tile, otherSide))
                 if side1 == side2:
                     fits.append((selfSide, otherSide, False))
@@ -122,11 +122,11 @@ Grid = Dict[Tuple[int, int], Tile]
 
 
 def minGrid(grid: Grid) -> Tuple[int, int]:
-    return min([k[0] for k in grid]), min([k[1] for k in grid])
+    return min(k[0] for k in grid), min(k[1] for k in grid)
 
 
 def maxGrid(grid: Grid) -> Tuple[int, int]:
-    return max([k[0] for k in grid]), max([k[1] for k in grid])
+    return max(k[0] for k in grid), max(k[1] for k in grid)
 
 
 tiles = []
@@ -188,13 +188,10 @@ while len(placedIDs) < len(tiles):
                         break
 
                     i += 1
-                    if i == 4:
+                    if i in [4, 12]:
                         tile.flipX()
-                    if i == 8:
+                    elif i == 8:
                         tile.flipY()
-                    if i == 12:
-                        tile.flipX()
-
                 if correctFit[0] == "top":
                     grid[(x, y + 1)] = tile
                 if correctFit[0] == "right":
@@ -212,12 +209,12 @@ data = {}
 ax = abs(minX)
 ay = abs(minY)
 gx, gy = 0, 0
+bpb = 1
 for y in range(minY, maxY + 1):
     for x in range(minX, maxX + 1):
         grid[(x, y)].removeBorder()
         mx = (ax + x) * grid[(x, y)].size
         my = (ay + y) * grid[(x, y)].size
-        bpb = 1
         for cy in range(grid[(x, y)].size):
             for cx in range(grid[(x, y)].size):
                 px = mx + cx
@@ -241,18 +238,14 @@ for i in range(24):
         break
 
     bigTile.rotate()
-    if i == 4:
+    if i in [4, 12]:
         bigTile.flipX()
-    if i == 8:
+    elif i == 8:
         bigTile.flipY()
-    if i == 12:
-        bigTile.flipX()
-
-
 mCount = 0
 line = f"{bigTile}".replace("\n", "")
+mods = [0, 5, 6, 11, 12, 17, 18, 19]
 for i, _ in enumerate(line):
-    mods = [0, 5, 6, 11, 12, 17, 18, 19]
     res = []
     try:
         for m in mods:

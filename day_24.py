@@ -61,7 +61,7 @@ class Grid:
             move = ""
             for c in line:
                 move += c
-                if c != "n" and c != "s":
+                if c not in ["n", "s"]:
                     self.step(move)
                     move = ""
             self.flip()
@@ -109,11 +109,11 @@ class Grid:
 
     @property
     def whiteCount(self):
-        return sum([True for g in self.grid.values() if g == self.WHITE])
+        return sum(True for g in self.grid.values() if g == self.WHITE)
 
     @property
     def blackCount(self):
-        return sum([True for g in self.grid.values() if g == self.BLACK])
+        return sum(True for g in self.grid.values() if g == self.BLACK)
 
 
 grid = Grid()

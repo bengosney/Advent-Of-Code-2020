@@ -17,12 +17,12 @@ def run(program):
 
         prev.append(pos)
         cmd, val = program[pos].split(" ")
-        if cmd == "nop":
-            pos += 1
-        if cmd == "jmp":
-            pos += int(val)
         if cmd == "acc":
             acc += int(val)
+            pos += 1
+        elif cmd == "jmp":
+            pos += int(val)
+        elif cmd == "nop":
             pos += 1
 
 
