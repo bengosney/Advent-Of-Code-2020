@@ -15,11 +15,7 @@ class Player:
     @property
     def score(self):
         revCards = self.cards[::-1]
-        score = 0
-        for i, card in enumerate(revCards, 1):
-            score += card * i
-
-        return score
+        return sum(card * i for i, card in enumerate(revCards, 1))
 
     @classmethod
     def parse(cls, input: str):
@@ -92,10 +88,11 @@ class RecursiveCombat(Combat):
     def round(self):
         roundState = "|".join(
             [
-                ",".join([str(c) for c in self.p1.cards]),
-                ",".join([str(c) for c in self.p2.cards]),
+                ",".join(str(c) for c in self.p1.cards),
+                ",".join(str(c) for c in self.p2.cards),
             ]
         )
+
         if roundState in self.previous:
             return self.p1
 

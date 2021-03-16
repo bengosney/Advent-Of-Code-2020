@@ -15,7 +15,7 @@ class Rule:
         return f"{self.colour} = {self.contains}"
 
     def canContain(self, bag):
-        return any([True for c in self.contains if c[1] == bag])
+        return any(True for c in self.contains if c[1] == bag)
 
 
 def find(colour):

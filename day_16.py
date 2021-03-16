@@ -18,9 +18,10 @@ class Rule:
     def parse(cls, row):
         name, ranges = [s.strip() for s in row.split(":")]
 
-        parsedRanges = []
-        for range in [s.strip() for s in ranges.split("or")]:
-            parsedRanges.append([int(r) for r in range.split("-")])
+        parsedRanges = [
+            [int(r) for r in range.split("-")]
+            for range in [s.strip() for s in ranges.split("or")]
+        ]
 
         return cls(name, parsedRanges)
 
@@ -63,10 +64,7 @@ class Ticket:
                     invalidMap[rule.name].add(col)
 
 
-rules = []
-for row in inputBlocks[0].splitlines():
-    rules.append(Rule.parse(row))
-
+rules = [Rule.parse(row) for row in inputBlocks[0].splitlines()]
 tickets: List[Ticket] = []
 for row in inputBlocks[2].splitlines():
     if "ticket" in row:
@@ -90,16 +88,16 @@ cols = list(range(len(tickets[0].numbers)))
 unmappedFields = [r.name for r in rules]
 fieldMap = {}
 while len(unmappedFields) > 1:
-    for key in invalidMap:
-        if len(invalidMap[key]) == len(unmappedFields) - 1:
+    for key, value_ in invalidMap.items():
+        if len(value_) == len(unmappedFields) - 1:
             validCol = [c for c in cols if c not in invalidMap[key]][0]
             fieldMap[key] = validCol
             cols.remove(validCol)
             unmappedFields.remove(key)
 
 departures = 1
-for col in fieldMap:
+for col, value in fieldMap.items():
     if "departure" in col:
-        departures *= myTicket.numbers[fieldMap[col]]
+        departures *= myTicket.numbers[value]
 
 print(f"part 2: {departures}")

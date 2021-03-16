@@ -50,7 +50,7 @@ def getSeats(state, tolerance, inview):
             break
         currentState = nextState
 
-    return sum([r.count("#") for r in currentState])
+    return sum(r.count("#") for r in currentState)
 
 
 print(f"part 1: {getSeats(orgState, 4, False)}")

@@ -46,6 +46,6 @@ i: Callable = (
 )
 
 N = reduce(operator.mul, [b.id for b in busses], 1)
-x = sum([b.position * (N // b.id) * i(N // b.id, b.id) for b in busses])
+x = sum(b.position * (N // b.id) * i(N // b.id, b.id) for b in busses)
 
 print(f"part 2: {N - x % N}")
