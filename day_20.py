@@ -188,7 +188,7 @@ while len(placedIDs) < len(tiles):
                         break
 
                     i += 1
-                    if i in [4, 12]:
+                    if i in {4, 12}:
                         tile.flipX()
                     elif i == 8:
                         tile.flipY()

@@ -22,12 +22,13 @@ class Rules:
         rule = self.rules[id]
         if seen.count(id) <= maxRecursion:
             for p in rule.split("|"):
-                ruleRegex = ""
-                for r in p.split(" "):
-                    if r.isnumeric():
-                        ruleRegex += self._compile(int(r), seen[:] + [id], maxRecursion)
-                    else:
-                        ruleRegex += r
+                ruleRegex = "".join(
+                    self._compile(int(r), seen[:] + [id], maxRecursion)
+                    if r.isnumeric()
+                    else r
+                    for r in p.split(" ")
+                )
+
                 regexParts.append(ruleRegex)
 
         regex = "|".join(regexParts)

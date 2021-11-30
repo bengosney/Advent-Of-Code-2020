@@ -36,14 +36,13 @@ def calc(tree):
         if isinstance(i, list):
             v = calc(i)
 
-        if v is not None:
-            if op == "+":
-                tot += v
-            elif op == "*":
-                tot *= v
-        else:
+        if v is None:
             op = i
 
+        elif op == "*":
+            tot *= v
+        elif op == "+":
+            tot += v
     return tot
 
 
@@ -81,5 +80,5 @@ def getTotal2(line):
     return calc2(fullTree)
 
 
-print(f"part 1: {sum([getTotal(l) for l in lines])}")
-print(f"part 2: {sum([getTotal2(l) for l in lines])}")
+print(f'part 1: {sum(getTotal(l) for l in lines)}')
+print(f'part 2: {sum(getTotal2(l) for l in lines)}')

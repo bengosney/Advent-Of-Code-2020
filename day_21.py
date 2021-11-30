@@ -50,14 +50,10 @@ def getDefinitiveContains() -> Dict[str, str]:
 
 definitiveContains = getDefinitiveContains()
 
-allergenFree = set()
-for ingredient in ingredients:
-    if ingredient not in hasAllergen:
-        allergenFree.add(ingredient)
+allergenFree = {
+    ingredient for ingredient in ingredients if ingredient not in hasAllergen
+}
 
-count = 0
-for aFree in allergenFree:
-    count += seen[aFree]
-
+count = sum(seen[aFree] for aFree in allergenFree)
 print(f"part 1: {count}")
 print(f"part 2: {','.join([v for k,v in sorted(definitiveContains.items())])}")
