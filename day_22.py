@@ -108,11 +108,10 @@ class RecursiveCombat(Combat):
                 self.p1.addCards([p1c, p2c])
             else:
                 self.p2.addCards([p2c, p1c])
+        elif p1c > p2c:
+            self.p1.addCards([p1c, p2c])
         else:
-            if p1c > p2c:
-                self.p1.addCards([p1c, p2c])
-            else:
-                self.p2.addCards([p2c, p1c])
+            self.p2.addCards([p2c, p1c])
 
         if not self.p1.hasCards:
             return self.p2

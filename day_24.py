@@ -101,9 +101,8 @@ class Grid:
                     if self.grid[key] == self.BLACK:
                         if adjBlack == 0 or adjBlack > 2:
                             newGrid[key] = self.WHITE
-                    else:
-                        if adjBlack == 2:
-                            newGrid[key] = self.BLACK
+                    elif adjBlack == 2:
+                        newGrid[key] = self.BLACK
 
         self.grid = newGrid
 

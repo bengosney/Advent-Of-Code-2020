@@ -112,9 +112,9 @@ for x, row in enumerate(input.splitlines()):
             workingSpace[(x, y, 0)] = True
             workingSpace4[(x, y, 0, 0)] = True
 
-for i in range(6):
+for _ in range(6):
     workingSpace = cycle(workingSpace)
     workingSpace4 = cycle4(workingSpace4)
 
-print(f"part 1: {sum([True for i in workingSpace if workingSpace[i]])}")
-print(f"part 2: {sum([True for i in workingSpace4 if workingSpace4[i]])}")
+print(f'part 1: {sum(True for i in workingSpace if workingSpace[i])}')
+print(f'part 2: {sum(True for i in workingSpace4 if workingSpace4[i])}')
